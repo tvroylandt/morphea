@@ -23,14 +23,8 @@ jobs:
           remotes::install_cran("rtweet")
           remotes::install_cran("googlesheets4")
         shell: Rscript {0}
-        
-      - name: Cache R packages
-        uses: actions/cache@v1
-        with:
-          path: ${{ env.R_LIBS_USER }}
-          key: r-${{ hashFiles('DESCRIPTION') }}
-        
-      - name: Render Dashboard and remove base html
+
+      - name: Run collecting script
         run: |-
           Rscript collecting_likes.R
 
