@@ -109,3 +109,8 @@ write_csv(df_tw_sheet_full, "tw_fav.csv")
 # write_sheet(df_tw_sheet_full,
 #             ss = Sys.getenv("SHEET_PATH"),
 #             sheet = "tw_fav")
+
+# PROBLEM WITH AUTH
+# Erreur : Client error: (401) UNAUTHENTICATED
+# * Request not authenticated due to missing, invalid, or expired OAuth token.
+# * Request is missing required authentication credential. Expected OAuth 2 access token, login cookie or other valid authentication credential. See https://developers.google.com/identity/sign-in/web/devconsole-project.

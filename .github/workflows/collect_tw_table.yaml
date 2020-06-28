@@ -4,9 +4,9 @@ on:
 
 jobs:
   collect:
-    name: Collect tweets
+    name: Collect tweets and render
     runs-on: ubuntu-latest
-    container: rocker/tidyverse
+    container: rocker/verse
     
     env:
       TW_API_KEY: ${{ secrets.TW_API_KEY }}
@@ -22,6 +22,7 @@ jobs:
         run: |
           remotes::install_cran("rtweet")
           remotes::install_cran("googlesheets4")
+          remotes::install_cran("reactable")
         shell: Rscript {0}
 
       - name: Run collecting script
@@ -33,4 +34,12 @@ jobs:
         with:
           name: tw_table
           path: tw_fav.csv
+          
+      - name: Render table
+        run: |-
+          rmarkdown::render("Rmd/tw_table.Rmd", output = "index.html")
+        shell: Rscript {0}
+      
+      - name: Publish to GH Pages
+        
 

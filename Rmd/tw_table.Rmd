@@ -1,0 +1,39 @@
+---
+title: "Morphea"
+author: "Thomas Vroylandt"
+date: "`r format(Sys.time(), '%d/%m/%Y')`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE,
+                      warning = FALSE,
+                      message = FALSE)
+```
+
+```{r import}
+# packages
+library(tidyverse)
+library(reactable)
+library(googlesheets4)
+
+# Google Auth
+gs4_deauth()
+
+# data
+df_tw_sheet <-
+  read_sheet(Sys.getenv("SHEET_PATH"),
+             sheet = "tw_fav")
+```
+
+## Table with my fav tweets
+
+```{r tab}
+df_tw_sheet %>% 
+  reactable()
+```
+
+## About it :
+
++ www.tillac-data.com/
++ https://github.com/tillac/morphea
