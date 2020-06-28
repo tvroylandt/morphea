@@ -18,6 +18,7 @@ knitr::opts_chunk$set(echo = FALSE,
 library(tidyverse)
 library(reactable)
 library(googlesheets4)
+library(htmltools)
 
 # Google Auth
 gs4_deauth()
@@ -31,8 +32,18 @@ df_tw_sheet <-
 ## Table with my fav tweets
 
 ```{r tab}
-df_tw_sheet %>% 
-  reactable()
+# printing functions
+
+# table
+df_tw_sheet %>%
+  reactable(columns = list(media_url = colDef(
+    name = "Media 1",
+    cell = f_media_img <- function(value) {
+      image <- img(src = value,
+                   height = "150px")
+      tagList(div(style = list(display = "inline-block"), image))
+    }
+  )))
 ```
 
 ## About it :

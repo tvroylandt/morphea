@@ -61,7 +61,7 @@ df_fav_quoted_users_infos <- df_fav %>%
   rename_all(function(x)
     paste0("quoted_", x))
 
-# joining all infos + cleaning list
+# joining all infos + cleaning lists
 df_fav_clean <- df_fav_select %>%
   left_join(df_fav_users_infos, by = "user_id") %>%
   left_join(df_fav_quoted_users_infos, by = "quoted_user_id") %>%
@@ -74,14 +74,11 @@ df_fav_clean <- df_fav_select %>%
     urls_url = str_remove_all(urls_url, 'c\\(|\\)|"'),
     urls_url = str_replace_all(urls_url, ", ", " \n"),
     urls_url = case_when(urls_url != "NA" ~ urls_url)
-  ) %>%
-  unnest(cols = c(media_url)) %>%
-  group_by(status_id) %>%
-  mutate(n = row_number()) %>%
-  pivot_wider(values_from = c(media_url), names_from = n) %>%
-  ungroup()
+  ) %>% 
+  unnest(c(media_url)) # only return the first image ???
 
 # Google Auth -------------------------------------------------------------
+# need to allow the API for the sheet
 gs4_auth(email = Sys.getenv("GOOGLE_MAIL"),
          path = "secret/morphea_token.json")
 
