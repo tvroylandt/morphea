@@ -37,7 +37,7 @@ jobs:
           
       - name: Render table
         run: |-
-          rmarkdown::render("Rmd/tw_table.Rmd", output = "index.html")
+          rmarkdown::render("Rmd/tw_table.Rmd", output_file = "index.html", output_dir = ".")
         shell: Rscript {0}
       
       - name: Install npm
