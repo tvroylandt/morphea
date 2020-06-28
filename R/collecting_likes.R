@@ -82,6 +82,8 @@ df_fav_clean <- df_fav_select %>%
   ungroup()
 
 # Google Auth -------------------------------------------------------------
+options(gargle_quiet = FALSE)
+
 gs4_auth(email = Sys.getenv("GOOGLE_MAIL"),
          token = Sys.getenv("GOOGLE_TOKEN"))
 
