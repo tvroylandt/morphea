@@ -14,6 +14,8 @@ jobs:
       TW_ACCESS_TOKEN: ${{ secrets.TW_ACCESS_TOKEN }}
       TW_SECRET_TOKEN: ${{ secrets.TW_SECRET_TOKEN }}
       SHEET_PATH: ${{ secrets.SHEET_PATH }}
+      GM_MAIL: ${{ secrets.GM_MAIL }}
+      GM_TOKEN: ${{ secrets.GM_TOKEN }}
     
     steps:
       - uses: actions/checkout@v2
