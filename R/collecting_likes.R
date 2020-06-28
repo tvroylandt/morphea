@@ -4,7 +4,7 @@
 
 library(rtweet)
 library(tidyverse)
-# library(googlesheets4)
+library(googlesheets4)
 
 # Twitter Auth ------------------------------------------------------------
 token <- create_token(
@@ -81,31 +81,31 @@ df_fav_clean <- df_fav_select %>%
   pivot_wider(values_from = c(media_url), names_from = n) %>%
   ungroup()
 
-# # Google Auth -------------------------------------------------------------
-# # Sheet is public with the link here
-# gs4_deauth()
-# 
-# # Importing Google Sheets -------------------------------------------------
-# df_tw_sheet <-
-#   read_sheet(Sys.getenv("SHEET_PATH"),
-#              sheet = "tw_fav")
-# 
-# # Merging data ------------------------------------------------------------
-# df_fav_tw_supp <- df_fav_clean %>%
-#   filter(!status_id %in% unique(df_tw_sheet$status_id))
-# 
-# df_tw_sheet_full <- df_tw_sheet %>%
-#   bind_rows(df_fav_tw_supp)
-# 
-# # Categorising data -------------------------------------------------------
-# 
-# 
-# 
-# # Intermediate save -------------------------------------------------------
-# # Saved as artifact
-# write_csv(df_tw_sheet_full, "tw_fav.csv")
-# 
-# # Exporting to Google Sheets ----------------------------------------------
-# write_sheet(df_tw_sheet_full,
-#             ss = Sys.getenv("SHEET_PATH"),
-#             sheet = "tw_fav")
+# Google Auth -------------------------------------------------------------
+# Sheet is public with the link here
+gs4_deauth()
+
+# Importing Google Sheets -------------------------------------------------
+df_tw_sheet <-
+  read_sheet(Sys.getenv("SHEET_PATH"),
+             sheet = "tw_fav")
+
+# Merging data ------------------------------------------------------------
+df_fav_tw_supp <- df_fav_clean %>%
+  filter(!status_id %in% unique(df_tw_sheet$status_id))
+
+df_tw_sheet_full <- df_tw_sheet %>%
+  bind_rows(df_fav_tw_supp)
+
+# Categorising data -------------------------------------------------------
+
+
+
+# Intermediate save -------------------------------------------------------
+# Saved as artifact
+write_csv(df_tw_sheet_full, "tw_fav.csv")
+
+# Exporting to Google Sheets ----------------------------------------------
+write_sheet(df_tw_sheet_full,
+            ss = Sys.getenv("SHEET_PATH"),
+            sheet = "tw_fav")
