@@ -106,6 +106,6 @@ df_tw_sheet_full <- df_tw_sheet %>%
 write_csv(df_tw_sheet_full, "tw_fav.csv")
 
 # Exporting to Google Sheets ----------------------------------------------
-write_sheet(df_tw_sheet_full,
-            ss = Sys.getenv("SHEET_PATH"),
-            sheet = "tw_fav")
+# write_sheet(df_tw_sheet_full,
+#             ss = Sys.getenv("SHEET_PATH"),
+#             sheet = "tw_fav")
