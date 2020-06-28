@@ -82,8 +82,8 @@ df_fav_clean <- df_fav_select %>%
   ungroup()
 
 # Google Auth -------------------------------------------------------------
-gs4_auth(email = Sys.getenv("GM_MAIL"),
-         token = Sys.getenv("GM_TOKEN"))
+gs4_auth(email = Sys.getenv("GOOGLE_MAIL"),
+         token = Sys.getenv("GOOGLE_TOKEN"))
 
 # Importing Google Sheets -------------------------------------------------
 df_tw_sheet <-
