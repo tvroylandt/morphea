@@ -6,7 +6,7 @@ library(rtweet)
 library(tidyverse)
 library(googlesheets4)
 
-# Auth --------------------------------------------------------------------
+# Twitter Auth ------------------------------------------------------------
 token <- create_token(
   app = "morphea_tv",
   consumer_key = Sys.getenv("TW_API_KEY"),
@@ -81,12 +81,14 @@ df_fav_clean <- df_fav_select %>%
   pivot_wider(values_from = c(media_url), names_from = n) %>%
   ungroup()
 
+# Google Auth -------------------------------------------------------------
+# Sheet is public with the link here
+gs4_deauth()
+
 # Importing Google Sheets -------------------------------------------------
 df_tw_sheet <-
   read_sheet(Sys.getenv("SHEET_PATH"),
              sheet = "tw_fav")
-
-# HANDLE AUTH HERE
 
 # Merging data ------------------------------------------------------------
 df_fav_tw_supp <- df_fav_clean %>%
