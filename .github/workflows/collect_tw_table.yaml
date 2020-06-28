@@ -18,12 +18,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       
-      - name: Install dependencies
-        run: |
-          remotes::install_cran("rtweet")
-          remotes::install_cran("googlesheets4")
-        shell: Rscript {0}
-
       - name: Run collecting script
         run: |-
           Rscript R/collecting_likes.R
