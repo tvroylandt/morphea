@@ -27,4 +27,10 @@ jobs:
       - name: Run collecting script
         run: |-
           Rscript R/collecting_likes.R
+          
+      - name: Save result as artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: tw_table
+          path: tw_fav.csv
 

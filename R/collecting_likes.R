@@ -99,7 +99,10 @@ df_tw_sheet_full <- df_tw_sheet %>%
 
 # Categorising data -------------------------------------------------------
 
-# --> ARTIFACT FROM THE SHEET AS SAVE
+
+# Intermediate save -------------------------------------------------------
+# Saved as artifact
+write_csv(df_tw_sheet_full, "tw_fav.csv")
 
 # Exporting to Google Sheets ----------------------------------------------
 write_sheet(df_tw_sheet_full,
