@@ -2,7 +2,9 @@
 title: "Morphea"
 author: "Thomas Vroylandt"
 date: "`r format(Sys.time(), '%d/%m/%Y')`"
-output: html_document
+output: 
+  html_document:
+    css: style.css
 ---
 
 ```{r setup, include=FALSE}
@@ -35,5 +37,5 @@ df_tw_sheet %>%
 
 ## About it :
 
-+ www.tillac-data.com/
++ https://www.tillac-data.com/
 + https://github.com/tillac/morphea
