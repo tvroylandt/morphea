@@ -18,6 +18,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       
+      - name: Install dependencies
+        run: |
+          remotes::install_cran("rtweet")
+        shell: Rscript {0}
+
       - name: Run collecting script
         run: |-
           Rscript R/collecting_likes.R
