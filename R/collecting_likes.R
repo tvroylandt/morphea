@@ -99,7 +99,6 @@ df_tw_sheet_full <- df_tw_sheet %>%
 
 # Categorising data -------------------------------------------------------
 
-
 # --> ARTIFACT FROM THE SHEET AS SAVE
 
 # Exporting to Google Sheets ----------------------------------------------

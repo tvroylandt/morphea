@@ -1,0 +1,36 @@
+name: Collecting tweets and render table
+on:
+  push
+
+jobs:
+  render:
+    name: Collect tweets
+    runs-on: ubuntu-latest
+    container: rocker/tidyverse
+    
+    env:
+      TW_API_KEY: ${{ secrets.TW_API_KEY }}
+      TW_SECRET_KEY: ${{ secrets.TW_SECRET_KEY }}
+      TW_ACCESS_TOKEN: ${{ secrets.TW_ACCESS_TOKEN }}
+      TW_SECRET_TOKEN: ${{ secrets.TW_SECRET_TOKEN }}
+      SHEET_PATH: ${{ secrets.SHEET_PATH }}
+    
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Install dependencies
+        run: |
+          remotes::install_cran("rtweet")
+          remotes::install_cran("googlesheets4")
+        shell: Rscript {0}
+        
+      - name: Cache R packages
+        uses: actions/cache@v1
+        with:
+          path: ${{ env.R_LIBS_USER }}
+          key: r-${{ hashFiles('DESCRIPTION') }}
+        
+      - name: Render Dashboard and remove base html
+        run: |-
+          Rscript collecting_likes.R
+
