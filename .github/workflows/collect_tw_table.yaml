@@ -26,5 +26,5 @@ jobs:
 
       - name: Run collecting script
         run: |-
-          Rscript collecting_likes.R
+          Rscript R/collecting_likes.R
 
