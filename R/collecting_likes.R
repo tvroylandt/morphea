@@ -82,8 +82,8 @@ df_fav_clean <- df_fav_select %>%
   ungroup()
 
 # Google Auth -------------------------------------------------------------
-# Sheet is public with the link here
-gs4_deauth()
+gs4_auth(email = Sys.getenv("GM_MAIL"),
+         token = Sys.getenv("GM_TOKEN"))
 
 # Importing Google Sheets -------------------------------------------------
 df_tw_sheet <-
@@ -95,7 +95,8 @@ df_fav_tw_supp <- df_fav_clean %>%
   filter(!status_id %in% unique(df_tw_sheet$status_id))
 
 df_tw_sheet_full <- df_tw_sheet %>%
-  bind_rows(df_fav_tw_supp)
+  bind_rows(df_fav_tw_supp) %>% 
+  arrange(desc(created_at))
 
 # Categorising data -------------------------------------------------------
 
@@ -106,11 +107,6 @@ df_tw_sheet_full <- df_tw_sheet %>%
 write_csv(df_tw_sheet_full, "tw_fav.csv")
 
 # Exporting to Google Sheets ----------------------------------------------
-# write_sheet(df_tw_sheet_full,
-#             ss = Sys.getenv("SHEET_PATH"),
-#             sheet = "tw_fav")
-
-# PROBLEM WITH AUTH
-# Erreur : Client error: (401) UNAUTHENTICATED
-# * Request not authenticated due to missing, invalid, or expired OAuth token.
-# * Request is missing required authentication credential. Expected OAuth 2 access token, login cookie or other valid authentication credential. See https://developers.google.com/identity/sign-in/web/devconsole-project.
+write_sheet(df_tw_sheet_full,
+            ss = Sys.getenv("SHEET_PATH"),
+            sheet = "tw_fav")
