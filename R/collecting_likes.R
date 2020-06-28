@@ -82,10 +82,8 @@ df_fav_clean <- df_fav_select %>%
   ungroup()
 
 # Google Auth -------------------------------------------------------------
-options(gargle_quiet = FALSE)
-
 gs4_auth(email = Sys.getenv("GOOGLE_MAIL"),
-         token = "secret/morphea_token.json")
+         path = "secret/morphea_token.json")
 
 # Importing Google Sheets -------------------------------------------------
 df_tw_sheet <-
@@ -110,5 +108,3 @@ write_csv(df_tw_sheet_full, "tw_fav.csv")
 write_sheet(df_tw_sheet_full,
             ss = Sys.getenv("SHEET_PATH"),
             sheet = "tw_fav")
-
-chantillybadminton
