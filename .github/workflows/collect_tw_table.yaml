@@ -7,7 +7,7 @@ jobs:
     name: Collect tweets and render
     runs-on: ubuntu-latest
     container: rocker/verse
-
+    
     env:
       TW_API_KEY: ${{ secrets.TW_API_KEY }}
       TW_SECRET_KEY: ${{ secrets.TW_SECRET_KEY }}
@@ -16,45 +16,44 @@ jobs:
       SHEET_PATH: ${{ secrets.SHEET_PATH }}
       GOOGLE_MAIL: ${{ secrets.GOOGLE_MAIL }}
       GOOGLE_TOKEN: ${{ secrets.GOOGLE_TOKEN }}
-    
+      
     steps:
       - uses: actions/checkout@v2
-    
+      
       - name: Decrypt large secret
-          run: ./secret/decrypt_secret.sh
-          env:
-            LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PASSPHRASE }}
+        run: ./secret/decrypt_secret.sh
+        env:
+          LARGE_SECRET_PASSPHRASE: ${{ secrets.LARGE_SECRET_PASSPHRASE }}
       
       - name: Install dependencies
-          run: |
-            remotes::install_cran("rtweet")
-            remotes::install_cran("googlesheets4")
-            remotes::install_cran("reactable")
-          shell: Rscript {0}
-          
+        run: |
+          remotes::install_cran("rtweet")
+          remotes::install_cran("googlesheets4")
+          remotes::install_cran("reactable")
+        shell: Rscript {0}
+
       - name: Run collecting script
-          run: |-
-            Rscript R/collecting_likes.R
-      
+        run: |-
+          Rscript R/collecting_likes.R
+          
       - name: Save result as artifact
-          uses: actions/upload-artifact@v1
-          with:
-            name: tw_table
-            path: tw_fav.csv
-      
+        uses: actions/upload-artifact@v1
+        with:
+          name: tw_table
+          path: tw_fav.csv
+          
       - name: Render table
-          run: |-
-            rmarkdown::render("Rmd/tw_table.Rmd", output_file = "index.html", output_dir = ".")
-          shell: Rscript {0}
+        run: |-
+          rmarkdown::render("Rmd/tw_table.Rmd", output_file = "index.html", output_dir = ".")
+        shell: Rscript {0}
       
       - name: Install npm
-          uses: actions/setup-node@v1
-      
+        uses: actions/setup-node@v1
+
       - name: Deploy to Netlify
-          env:
-            NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-            NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-          run: |
-            npm install netlify-cli -g
-            netlify deploy --prod --dir .
-            
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        run: |
+          npm install netlify-cli -g
+          netlify deploy --prod --dir .  
