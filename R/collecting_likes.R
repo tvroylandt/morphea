@@ -85,7 +85,7 @@ df_fav_clean <- df_fav_select %>%
 options(gargle_quiet = FALSE)
 
 gs4_auth(email = Sys.getenv("GOOGLE_MAIL"),
-         token = Sys.getenv("GOOGLE_TOKEN"))
+         token = "secret/morphea_token.json")
 
 # Importing Google Sheets -------------------------------------------------
 df_tw_sheet <-
@@ -102,8 +102,6 @@ df_tw_sheet_full <- df_tw_sheet %>%
 
 # Categorising data -------------------------------------------------------
 
-
-
 # Intermediate save -------------------------------------------------------
 # Saved as artifact
 write_csv(df_tw_sheet_full, "tw_fav.csv")
@@ -112,3 +110,5 @@ write_csv(df_tw_sheet_full, "tw_fav.csv")
 write_sheet(df_tw_sheet_full,
             ss = Sys.getenv("SHEET_PATH"),
             sheet = "tw_fav")
+
+chantillybadminton
