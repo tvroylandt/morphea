@@ -31,19 +31,34 @@ df_tw_sheet <-
 
 ## Table with my fav tweets
 
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> 
+
 ```{r tab}
 # printing functions
 
 # table
 df_tw_sheet %>%
-  reactable(columns = list(media_url = colDef(
-    name = "Media 1",
-    cell = f_media_img <- function(value) {
-      image <- img(src = value,
-                   height = "150px")
-      tagList(div(style = list(display = "inline-block"), image))
-    }
-  )))
+  mutate(
+    embed_url = paste0(
+      "https://publish.twitter.com/oembed?url=https://twitter.com/",
+      tolower(screen_name),
+      "/status/",
+      status_id
+    )
+  ) %>%
+  select(embed_url) %>%
+  reactable(columns = list(
+    embed_url = colDef(
+      name = "Tweet",
+      cell = function(value){
+        ret <- value %>%
+          httr::GET() %>%
+          httr::content()
+        ret$html
+      },
+      html = TRUE
+    )
+  ))
 ```
 
 ## About it :

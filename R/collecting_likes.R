@@ -77,6 +77,8 @@ df_fav_clean <- df_fav_select %>%
   ) %>% 
   unnest(c(media_url)) # only return the first image ???
 
+# use https://docs.ropensci.org/rtweet/reference/flatten.html for list-columns ?
+
 # Google Auth -------------------------------------------------------------
 # need to allow the API for the sheet
 gs4_auth(email = Sys.getenv("GOOGLE_MAIL"),
