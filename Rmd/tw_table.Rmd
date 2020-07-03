@@ -31,34 +31,83 @@ df_tw_sheet <-
 
 ## Table with my fav tweets
 
-<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> 
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
 ```{r tab}
 # printing functions
+bar_chart <-
+  function(label,
+           width = "100%",
+           height = "16px",
+           fill = "#00bfc4",
+           background = NULL) {
+    bar <-
+      div(style = list(
+        background = fill,
+        width = width,
+        height = height
+      ))
+    chart <-
+      div(style = list(
+        flexGrow = 1,
+        marginLeft = "8px",
+        background = background
+      ),
+      bar)
+    div(style = list(display = "flex", alignItems = "center"), chart)
+  }
+
+# data
+data <- df_tw_sheet %>%
+  mutate(
+    created_at = format(created_at, format = "%d/%m/%Y \n%H:%M"),
+    link_tw = paste0("https://twitter.com/", screen_name, "/status/", status_id),
+    text = str_remove_all(text, "http\\S+\\s*")
+  ) %>%
+  select(created_at,
+         name,
+         text,
+         hashtags,
+         urls_url,
+         link_tw,
+         favorite_count,
+         retweet_count)
 
 # table
-df_tw_sheet %>%
-  mutate(
-    embed_url = paste0(
-      "https://publish.twitter.com/oembed?url=https://twitter.com/",
-      tolower(screen_name),
-      "/status/",
-      status_id
+reactable(
+  data,
+  filterable = TRUE,
+  defaultPageSize = 100,
+  defaultColDef = colDef(headerClass = "header"),
+  columns = list(
+    created_at = colDef(name = "Date"),
+    name = colDef(name = "Account"),
+    text = colDef(name = "Text", 
+                  minWidth = 300),
+    hashtags = colDef(minWidth = 120),
+    favorite_count = colDef(
+      name = "Fav nb.",
+      cell = function(value) {
+        width <-
+          paste0(log(value) / log(max(data$favorite_count)) * 100, "%")
+        bar_chart(value, width = width, fill = "#f08080")
+      }
+    ),
+    link_tw = colDef(name = "Link",
+      cell = function(value) {
+        tags$a(href = value, target = "_blank", "Tweet")
+      }
+    ),
+    retweet_count = colDef(
+      name = "Fav RT",
+      cell = function(value) {
+        width <-
+          paste0(log(value) / log(max(data$retweet_count)) * 100, "%")
+        bar_chart(value, width = width, fill = "#1da1f2")
+      }
     )
-  ) %>%
-  select(embed_url) %>%
-  reactable(columns = list(
-    embed_url = colDef(
-      name = "Tweet",
-      cell = function(value){
-        ret <- value %>%
-          httr::GET() %>%
-          httr::content()
-        ret$html
-      },
-      html = TRUE
-    )
-  ))
+  )
+)
 ```
 
 ## About it :

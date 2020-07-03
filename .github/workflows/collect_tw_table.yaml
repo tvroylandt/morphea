@@ -1,6 +1,8 @@
 name: Collecting tweets and render table
 on:
-  push
+  push:
+    branches:
+      - master
 
 jobs:
   collect:
