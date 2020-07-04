@@ -1,0 +1,128 @@
+/* -------------------------------- */
+/* -- Light tillac style sheet  --- */
+/* - for rmarkdown::html_document - */
+/* -------------------------------- */
+
+
+/* ---- CSS variables ---- */
+:root {
+	--main_color: #741336;
+	--body_color: #606c71;
+}
+
+/* ---- Fonts ---- */
+
+@import url('https://fonts.googleapis.com/css?family=Lato');
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
+/* ---- Page ---- */
+
+/* page size */
+.main-container{
+	max-width: 85% !important;
+}
+
+/* background */
+
+
+/* logo */
+/* use header.html */
+.page-header {
+  color: var(--main_color);
+  text-align: center;
+  padding: 3rem 4rem;
+}
+
+/* ---- Text and headers ---- */
+
+/* text */
+body {
+  padding: 0;
+  margin: 0;
+  margin-top: -50px;
+  font-family: "Lato";
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--body_color);
+}
+
+
+/* header */
+h1,
+h2{
+    font-family: "Roboto";
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    font-weight: bold;
+    display: inline;
+  }
+
+  h1:after ,
+  h2:after {
+    content:"\a";
+    white-space: pre;
+    line-height:2;
+}
+
+h1 {
+  font-size: 2.5em;
+}
+
+h1 {
+  background-color: var(--main_color);
+  color : #ffffff;
+  border-bottom: none;
+}
+
+h2 {
+  color: var(--main_color);
+  border-bottom: solid var(--main_color) 4px;
+  line-height: 0.15;
+    text-decoration: none;
+}
+
+h3 {
+  color: var(--body_color);
+  border-bottom: solid var(--main_color) 4px;
+  line-height: 0.15;
+  text-decoration: none;
+}
+
+h4 {
+  color: var(--main_color);
+}
+
+/* lists */
+
+
+/* links */
+a {
+  color: var(--body_color);
+  border-bottom: solid var(--main_color) 4px;
+  line-height: 0.2;
+  text-decoration: none;
+
+
+}
+
+a:hover {
+  background-color: var(--main_color);
+  color : #ffffff;
+  border-bottom: none;
+  line-height: 1;
+  text-decoration: none;
+}
+
+
+/* ---- Reactable style ---- */
+
+/* header */
+.header {
+	text-align: center !important;
+	border-top: 4px solid var(--main_color);
+}
+
+/* footer */
+.pagination-bottom {
+	border-bottom: 4px solid var(--main_color);
+}

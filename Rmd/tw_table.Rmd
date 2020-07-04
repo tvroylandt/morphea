@@ -4,7 +4,9 @@ author: "Thomas Vroylandt"
 date: "`r format(Sys.time(), '%d/%m/%Y')`"
 output: 
   html_document:
-    css: style.css
+    css: "../style/style.css"
+    includes:
+      in_header: "../style/header.html"
 ---
 
 ```{r setup, include=FALSE}
@@ -28,10 +30,6 @@ df_tw_sheet <-
   read_sheet(Sys.getenv("SHEET_PATH"),
              sheet = "tw_fav")
 ```
-
-## Table with my fav tweets
-
-<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
 ```{r tab}
 # printing functions
@@ -67,6 +65,7 @@ data <- df_tw_sheet %>%
   select(created_at,
          name,
          text,
+         media_url,
          hashtags,
          urls_url,
          link_tw,
@@ -82,20 +81,37 @@ reactable(
   columns = list(
     created_at = colDef(name = "Date"),
     name = colDef(name = "Account"),
-    text = colDef(name = "Text", 
+    text = colDef(name = "Text",
                   minWidth = 300),
-    hashtags = colDef(minWidth = 120),
+    hashtags = colDef(name = "Hashtags", minWidth = 120),
+    urls_url = colDef(
+      name = "Links",
+      cell = function(value) {
+        if(!is.na(value)){
+          tags$a(href = value, target = "_blank", as.character(value))
+        }
+      }
+    ),
+    link_tw = colDef(
+      name = "Tweet",
+      cell = function(value) {
+        tags$a(href = value, target = "_blank", "Tweet")
+      }
+    ),
+    media_url = colDef(
+      name = "Media",
+      cell = function(value) {
+        image <- img(src = value)
+        tagList(div(style = list(display = "inline-block", width = "100%"), image))
+      },
+      minWidth = 150
+    ),
     favorite_count = colDef(
       name = "Fav nb.",
       cell = function(value) {
         width <-
           paste0(log(value) / log(max(data$favorite_count)) * 100, "%")
-        bar_chart(value, width = width, fill = "#f08080")
-      }
-    ),
-    link_tw = colDef(name = "Link",
-      cell = function(value) {
-        tags$a(href = value, target = "_blank", "Tweet")
+        bar_chart(value, width = width, fill = "#741336")
       }
     ),
     retweet_count = colDef(
@@ -103,14 +119,12 @@ reactable(
       cell = function(value) {
         width <-
           paste0(log(value) / log(max(data$retweet_count)) * 100, "%")
-        bar_chart(value, width = width, fill = "#1da1f2")
+        bar_chart(value, width = width, fill = "#606c71")
       }
     )
   )
 )
 ```
-
-## About it :
 
 + https://www.tillac-data.com/
 + https://github.com/tillac/morphea
