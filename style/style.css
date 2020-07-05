@@ -101,8 +101,6 @@ a {
   border-bottom: solid var(--main_color) 4px;
   line-height: 0.2;
   text-decoration: none;
-
-
 }
 
 a:hover {
@@ -110,6 +108,13 @@ a:hover {
   color : #ffffff;
   border-bottom: none;
   line-height: 1;
+  text-decoration: none;
+}
+
+a:active {
+  color: var(--body_color);
+  border-bottom: solid var(--main_color) 4px;
+  line-height: 0.2;
   text-decoration: none;
 }
 
@@ -125,4 +130,14 @@ a:hover {
 /* footer */
 .pagination-bottom {
 	border-bottom: 4px solid var(--main_color);
+}
+
+/* hover chart */
+.hideout {
+  display: none;
+  text-align: left;
+}
+
+.b-chart:hover + .hideout {
+  display: block;
 }

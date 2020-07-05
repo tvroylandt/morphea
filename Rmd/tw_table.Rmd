@@ -33,42 +33,56 @@ df_tw_sheet <-
 
 ```{r tab}
 # printing functions
+# bar chart
 bar_chart <-
   function(label,
            width = "100%",
-           height = "16px",
+           height = "18px",
            fill = "#00bfc4",
            background = NULL) {
     bar <-
-      div(style = list(
-        background = fill,
-        width = width,
-        height = height
-      ))
+      div(class = "b-chart",
+          style = list(
+            background = fill,
+            width = width,
+            height = height
+          ))
+    label <- div(class = "hideout", format(label, big.mark = " "))
     chart <-
       div(style = list(
         flexGrow = 1,
         marginLeft = "8px",
         background = background
       ),
-      bar)
-    div(style = list(display = "flex", alignItems = "center"), chart)
+      bar,
+      label)
+    div(style = list(display = "flex", alignItems = "center"),
+        chart)
   }
+
+# image
+print_img <- function(value) {
+        if (!is.na(value)) {
+          image <- img(src = value)
+          tags$a(href = value, target = "_blank", tagList(div(
+            style = list(display = "inline-block", width = "100%"), image
+          )))
+        }
+      }
 
 # data
 data <- df_tw_sheet %>%
   mutate(
-    created_at = format(created_at, format = "%d/%m/%Y \n%H:%M"),
     link_tw = paste0("https://twitter.com/", screen_name, "/status/", status_id),
     text = str_remove_all(text, "http\\S+\\s*")
   ) %>%
-  select(created_at,
+  select(link_tw,
+         created_at,
          name,
          text,
          media_url,
          hashtags,
          urls_url,
-         link_tw,
          favorite_count,
          retweet_count)
 
@@ -79,7 +93,12 @@ reactable(
   defaultPageSize = 100,
   defaultColDef = colDef(headerClass = "header"),
   columns = list(
-    created_at = colDef(name = "Date"),
+    created_at = colDef(
+      name = "Date",
+      cell = function(value) {
+        format(value, format = "%d/%m/%Y \n%H:%M")
+      }
+    ),
     name = colDef(name = "Account"),
     text = colDef(name = "Text",
                   minWidth = 300),
@@ -87,27 +106,28 @@ reactable(
     urls_url = colDef(
       name = "Links",
       cell = function(value) {
-        if(!is.na(value)){
+        if (!is.na(value)) {
           tags$a(href = value, target = "_blank", as.character(value))
         }
       }
     ),
     link_tw = colDef(
-      name = "Tweet",
+      name = "",
+      filterable = FALSE,
+      minWidth = 10,
       cell = function(value) {
-        tags$a(href = value, target = "_blank", "Tweet")
+        tags$a(href = value, target = "_blank", "\u2693")
       }
     ),
     media_url = colDef(
       name = "Media",
-      cell = function(value) {
-        image <- img(src = value)
-        tagList(div(style = list(display = "inline-block", width = "100%"), image))
-      },
+      filterable = FALSE,
+      cell = print_img,
       minWidth = 150
     ),
     favorite_count = colDef(
       name = "Fav nb.",
+      filterable = FALSE,
       cell = function(value) {
         width <-
           paste0(log(value) / log(max(data$favorite_count)) * 100, "%")
@@ -116,9 +136,10 @@ reactable(
     ),
     retweet_count = colDef(
       name = "Fav RT",
+      filterable = FALSE,
       cell = function(value) {
         width <-
-          paste0(log(value) / log(max(data$retweet_count)) * 100, "%")
+          paste0(log(value + 1) / log(max(data$retweet_count)) * 100, "%")
         bar_chart(value, width = width, fill = "#606c71")
       }
     )
