@@ -33,6 +33,12 @@
   padding: 3rem 4rem;
 }
 
+/* social bar */
+.social-bar{
+  margin: 0 98% 1%;
+  font-size: 2.5rem;
+};
+
 /* ---- Text and headers ---- */
 
 /* text */
@@ -140,4 +146,21 @@ a:active {
 
 .b-chart:hover + .hideout {
   display: block;
+}
+
+/* img grid design */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.column {
+  flex: 50%;
+  max-width: 50%;
+}
+
+.column img {
+  margin-top: 8px;
+  vertical-align: middle;
+  width: 100%;
 }

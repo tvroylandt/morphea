@@ -15,6 +15,10 @@ knitr::opts_chunk$set(echo = FALSE,
                       message = FALSE)
 ```
 
+<div class = "social-bar">
+[`r icon::ii(name = "social-github")` ](https://github.com/tillac/morphea)
+</div>
+
 ```{r import}
 # packages
 library(tidyverse)
@@ -26,12 +30,57 @@ library(htmltools)
 gs4_deauth()
 
 # data
-df_tw_sheet <-
+data <-
   read_sheet(Sys.getenv("SHEET_PATH"),
-             sheet = "tw_fav")
+             sheet = "tw_fav") %>%
+  mutate(
+    text = if_else(
+      is_quote == TRUE,
+      paste0(text, "\n ** ---------------- ** \n", quoted_text),
+      text
+    ),
+    text = str_remove_all(text, "http\\S+\\s*"),
+    urls_expanded_url = case_when(
+      is_quote == TRUE &
+        (!is.na(urls_expanded_url) &
+           !is.na(quoted_urls_expanded_url)) ~   paste0(urls_expanded_url, " ", quoted_urls_expanded_url),
+      is_quote == TRUE &
+        (is.na(urls_expanded_url) &
+           !is.na(quoted_urls_expanded_url)) ~   quoted_urls_expanded_url,
+      is_quote == TRUE &
+        (!is.na(urls_expanded_url) &
+           is.na(quoted_urls_expanded_url)) ~   urls_expanded_url,
+      TRUE ~ urls_expanded_url
+    ),
+    urls_expanded_url = str_trim(urls_expanded_url, "both"),
+    ext_media_url = case_when(
+      is_quote == TRUE &
+        (!is.na(ext_media_url) &
+           !is.na(quoted_ext_media_url)) ~   paste0(ext_media_url, " ", quoted_ext_media_url),
+      is_quote == TRUE &
+        (is.na(ext_media_url) &
+           !is.na(quoted_ext_media_url)) ~   quoted_ext_media_url,
+      is_quote == TRUE &
+        (!is.na(ext_media_url) &
+           is.na(quoted_ext_media_url)) ~   ext_media_url,
+      TRUE ~ ext_media_url
+    ),
+  ) %>%
+  select(
+    link_tw,
+    created_at,
+    name,
+    text,
+    ext_media_url,
+    hashtags,
+    urls_expanded_url,
+    favorite_count,
+    retweet_count
+  )
 ```
 
-```{r tab}
+
+```{r tab_functions}
 # printing functions
 # bar chart
 bar_chart <-
@@ -60,32 +109,74 @@ bar_chart <-
         chart)
   }
 
-# image
+# img link
+link_img <- function(img, nb) {
+  tags$a(href = img[nb], target = "_blank", tagList(div(
+    style = list(display = "inline-block", width = "100%"),
+    img(src = img[nb])
+  )))
+}
+
+# img printing
 print_img <- function(value) {
-        if (!is.na(value)) {
-          image <- img(src = value)
-          tags$a(href = value, target = "_blank", tagList(div(
-            style = list(display = "inline-block", width = "100%"), image
-          )))
-        }
-      }
+  if (!is.na(value)) {
+    # nb img
+    img_list <- str_split(value, pattern = " ")[[1]]
+    nb_img <- length(img_list)
+    
+    # 1 img
+    if (nb_img == 1) {
+      link_img(img_list, 1)
+    }
+    
+    # 2 img
+    else if (nb_img == 2) {
+      div(class = "row",
+          div(class = "column", link_img(img_list, 1)),
+          div(class = "column", link_img(img_list, 2)))
+    }
+    
+    # 3 img
+    else if (nb_img == 3) {
+      div(
+        class = "row",
+        div(class = "column", link_img(img_list, 1)),
+        div(class = "column", link_img(img_list, 2),
+            link_img(img_list, 3))
+      )
+    }
+    
+    # 4 img
+    else if (nb_img >= 4) {
+      div(
+        class = "row",
+        div(class = "column", link_img(img_list, 1),
+            link_img(img_list, 2)),
+        div(class = "column",
+            link_img(img_list, 3),
+            link_img(img_list, 4))
+      )
+    }
+  }
+}
 
-# data
-data <- df_tw_sheet %>%
-  mutate(
-    link_tw = paste0("https://twitter.com/", screen_name, "/status/", status_id),
-    text = str_remove_all(text, "http\\S+\\s*")
-  ) %>%
-  select(link_tw,
-         created_at,
-         name,
-         text,
-         media_url,
-         hashtags,
-         urls_url,
-         favorite_count,
-         retweet_count)
+# link_list
+link_list_url <- function(value) {
+  if (!is.na(value)) {
+    link_list <- str_split(value, pattern = " ")[[1]]
+    
+    tagList(lapply(link_list, function(x) {
+      div(tags$a(
+        href = x,
+        target = "_blank",
+        str_remove_all(x, "https://|http://")
+      ))
+    }))
+  }
+}
+```
 
+```{r tab}
 # table
 reactable(
   data,
@@ -101,16 +192,11 @@ reactable(
     ),
     name = colDef(name = "Account"),
     text = colDef(name = "Text",
-                  minWidth = 300),
-    hashtags = colDef(name = "Hashtags", minWidth = 120),
-    urls_url = colDef(
-      name = "Links",
-      cell = function(value) {
-        if (!is.na(value)) {
-          tags$a(href = value, target = "_blank", as.character(value))
-        }
-      }
-    ),
+                  minWidth = 200),
+    hashtags = colDef(name = "Hashtags", minWidth = 100),
+    urls_expanded_url = colDef(name = "Links",
+                               cell = link_list_url,
+                               html = TRUE),
     link_tw = colDef(
       name = "",
       filterable = FALSE,
@@ -119,11 +205,11 @@ reactable(
         tags$a(href = value, target = "_blank", "\u2693")
       }
     ),
-    media_url = colDef(
+    ext_media_url = colDef(
       name = "Media",
       filterable = FALSE,
       cell = print_img,
-      minWidth = 150
+      minWidth = 180
     ),
     favorite_count = colDef(
       name = "Fav nb.",
@@ -146,6 +232,3 @@ reactable(
   )
 )
 ```
-
-+ https://www.tillac-data.com/
-+ https://github.com/tillac/morphea
