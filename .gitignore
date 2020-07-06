@@ -4,6 +4,6 @@
 .Ruserdata
 
 R/set_env_secrets.R
-*.html
+tw_table.html
 secret/morphea_token.json
 tw_fav.csv
