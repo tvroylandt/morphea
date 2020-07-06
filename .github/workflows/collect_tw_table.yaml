@@ -1,6 +1,8 @@
 name: Collecting tweets and render table
 on:
-  push
+  push:
+    branches:
+      - master
 
 jobs:
   collect:
@@ -30,6 +32,7 @@ jobs:
           remotes::install_cran("rtweet")
           remotes::install_cran("googlesheets4")
           remotes::install_cran("reactable")
+          remotes::install_github("ropenscilabs/icon")
         shell: Rscript {0}
 
       - name: Run collecting script
