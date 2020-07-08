@@ -64,10 +64,9 @@ df_fav_quoted_users_infos <- df_quoted_tweets %>%
     paste0("quoted_", x))
 
 df_quoted_media <- df_quoted_tweets %>%
-  select(status_id, ext_media_url,
+  select(status_id,
          urls_expanded_url) %>%
-  rename(quoted_ext_media_url = ext_media_url,
-         quoted_urls_expanded_url = urls_expanded_url)
+  rename(quoted_urls_expanded_url = urls_expanded_url)
 
 # joining all infos + cleaning lists
 df_fav_clean <- df_fav_select %>%

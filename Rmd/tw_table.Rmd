@@ -34,12 +34,13 @@ data <-
   read_sheet(Sys.getenv("SHEET_PATH"),
              sheet = "tw_fav") %>%
   mutate(
-    text = if_else(
-      is_quote == TRUE,
-      paste0(text, "\n ** ---------------- ** \n", quoted_text),
-      text
+    embed_url = paste0(
+      "https://publish.twitter.com/oembed?url=https://twitter.com/",
+      tolower(screen_name),
+      "/status/",
+      status_id
     ),
-    text = str_remove_all(text, "http\\S+\\s*"),
+    embed_html = map(embed_url, ~ httr::content(httr::GET(.x))$html),
     urls_expanded_url = case_when(
       is_quote == TRUE &
         (!is.na(urls_expanded_url) &
@@ -52,26 +53,13 @@ data <-
            is.na(quoted_urls_expanded_url)) ~   urls_expanded_url,
       TRUE ~ urls_expanded_url
     ),
-    urls_expanded_url = str_trim(urls_expanded_url, "both"),
-    ext_media_url = case_when(
-      is_quote == TRUE &
-        (!is.na(ext_media_url) &
-           !is.na(quoted_ext_media_url)) ~   paste0(ext_media_url, " ", quoted_ext_media_url),
-      is_quote == TRUE &
-        (is.na(ext_media_url) &
-           !is.na(quoted_ext_media_url)) ~   quoted_ext_media_url,
-      is_quote == TRUE &
-        (!is.na(ext_media_url) &
-           is.na(quoted_ext_media_url)) ~   ext_media_url,
-      TRUE ~ ext_media_url
-    ),
+    urls_expanded_url = str_trim(urls_expanded_url, "both")
   ) %>%
   select(
     link_tw,
     created_at,
     name,
-    text,
-    ext_media_url,
+    embed_html,
     hashtags,
     urls_expanded_url,
     favorite_count,
@@ -109,57 +97,6 @@ bar_chart <-
         chart)
   }
 
-# img link
-link_img <- function(img, nb) {
-  tags$a(href = img[nb], target = "_blank", tagList(div(
-    style = list(display = "inline-block", width = "100%"),
-    img(src = img[nb])
-  )))
-}
-
-# img printing
-print_img <- function(value) {
-  if (!is.na(value)) {
-    # nb img
-    img_list <- str_split(value, pattern = " ")[[1]]
-    nb_img <- length(img_list)
-    
-    # 1 img
-    if (nb_img == 1) {
-      link_img(img_list, 1)
-    }
-    
-    # 2 img
-    else if (nb_img == 2) {
-      div(class = "row",
-          div(class = "column", link_img(img_list, 1)),
-          div(class = "column", link_img(img_list, 2)))
-    }
-    
-    # 3 img
-    else if (nb_img == 3) {
-      div(
-        class = "row",
-        div(class = "column", link_img(img_list, 1)),
-        div(class = "column", link_img(img_list, 2),
-            link_img(img_list, 3))
-      )
-    }
-    
-    # 4 img
-    else if (nb_img >= 4) {
-      div(
-        class = "row",
-        div(class = "column", link_img(img_list, 1),
-            link_img(img_list, 2)),
-        div(class = "column",
-            link_img(img_list, 3),
-            link_img(img_list, 4))
-      )
-    }
-  }
-}
-
 # link_list
 link_list_url <- function(value) {
   if (!is.na(value)) {
@@ -176,12 +113,37 @@ link_list_url <- function(value) {
 }
 ```
 
+<script src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<script src="https://cdn.jsdelivr.net/npm/create-react-class@15.6.3/create-react-class.min.js"></script>
+
+```{js, echo=FALSE}
+// Custom React component that loads embedded Tweet HTML
+(function () {
+  const Tweet = createReactClass({
+    componentDidMount: function() {
+      twttr.widgets.load(this.el)
+    },
+    setRef: function(el) {
+      this.el = el
+    },
+    render: function() {
+      const html = { __html: this.props.html }
+      return React.createElement('div', { ref: this.setRef, dangerouslySetInnerHTML: html })
+    }
+  })
+
+  window.embeddedTweet = function(html) {
+    return React.createElement(Tweet, { html: html, key: html })
+  }
+})()
+```
+
 ```{r tab}
 # table
 reactable(
   data,
   filterable = TRUE,
-  defaultPageSize = 100,
+  defaultPageSize = 50,
   defaultColDef = colDef(headerClass = "header"),
   columns = list(
     created_at = colDef(
@@ -191,8 +153,13 @@ reactable(
       }
     ),
     name = colDef(name = "Account"),
-    text = colDef(name = "Text",
-                  minWidth = 200),
+    embed_html = colDef(
+        name = "Tweet",
+        minWidth = 500,
+      cell = JS("function(cellInfo) {
+          return embeddedTweet(cellInfo.value)
+        }")
+      ),
     hashtags = colDef(name = "Hashtags", minWidth = 100),
     urls_expanded_url = colDef(name = "Links",
                                cell = link_list_url,
@@ -204,12 +171,6 @@ reactable(
       cell = function(value) {
         tags$a(href = value, target = "_blank", "\u2693")
       }
-    ),
-    ext_media_url = colDef(
-      name = "Media",
-      filterable = FALSE,
-      cell = print_img,
-      minWidth = 180
     ),
     favorite_count = colDef(
       name = "Fav nb.",
