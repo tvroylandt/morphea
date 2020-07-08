@@ -17,7 +17,7 @@ The name is inspired by Morpheus, greek god of sleep ("Morphée" in French) sinc
 
 I design a full pipeline using Github Actions to have my tweets pulled from Twitter and put inside the table.
 
-You can learn more about it by reading this blog post : [tillac blog post](link).
+You can learn more about it by reading this blog post : [https://www.tillac-data.com/2020-search-your-tweets-with-an-automatic-pipeline/](https://www.tillac-data.com/2020-search-your-tweets-with-an-automatic-pipeline/).
 
 ## To come after that
 
