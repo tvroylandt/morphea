@@ -11,7 +11,7 @@ jobs:
   collect:
     name: Collect tweets and render
     runs-on: ubuntu-18.04
-    container: rocker/verse-3.6.3
+    container: rocker/verse:3.6.3
     
     env:
       TW_API_KEY: ${{ secrets.TW_API_KEY }}
