@@ -25,10 +25,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       
+      - name : Update
+        run: apt-get update
+        
       - name: Install gpg
-        run: |
-          apt-get update \
-          apt-get install -y  gnupg2
+        run: apt-get install gnupg2
       
       - name: Decrypt large secret
         run: ./secret/decrypt_secret.sh
