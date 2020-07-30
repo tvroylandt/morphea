@@ -38,9 +38,7 @@ jobs:
       
       - name: Install dependencies
         run: |
-          remotes::install_cran("rtweet")
-          remotes::install_cran("googlesheets4")
-          remotes::install_cran("reactable")
+          remotes::install_cran(c("rtweet", ""googlesheets4", "reactable"))
           remotes::install_github("ropenscilabs/icon")
         shell: Rscript {0}
 
