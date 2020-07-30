@@ -90,7 +90,7 @@ df_fav_clean <- df_fav_select %>%
 # Google Auth -------------------------------------------------------------
 # need to allow the API for the sheet
 googlesheets4::gs4_auth(email = Sys.getenv("GOOGLE_MAIL"),
-         path = "secret/morphea_token.json")
+                        path = "secret/morphea_token.json")
 
 # # Importing Google Sheets -------------------------------------------------
 # df_tw_sheet <-
