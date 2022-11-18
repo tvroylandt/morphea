@@ -85,7 +85,7 @@ df_fav_clean <- df_fav_select %>%
     urls_expanded_url = str_remove(urls_expanded_url, quoted_link_tw),
     urls_expanded_url = str_trim(urls_expanded_url, "both")
   ) %>% 
-  arrange(desc(created_at))
+  arrange(desc(created_at)) 
 
 # Google Auth -------------------------------------------------------------
 # need to allow the API for the sheet
